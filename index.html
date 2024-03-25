@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stories</title>
+<style>
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 100%; /* Could be more or less, depending on screen size */
+}
+
+.story-thumb img {
+    width: 100%;
+    height: 100%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.story-thumb {
+    height: 80px;
+    width: 80px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 5px solid red;
+    cursor: pointer;
+    background-size: cover;
+}
+li.story {
+    display: inline-block;
+    margin: 10px;
+}
+.modal-container {
+    margin: 15% auto;
+    width: 600px;
+}
+.controlers {
+    display: flex;
+    justify-content: space-evenly;
+    font-family: open sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    text-decoration: underline;
+}
+.lido .story-thumb {
+    border-color: #e2e2e2;
+}
+    </style>
+</head>
+<body>
+    <ul id="lista">
+    </ul>
+    <div id="myModal" class="modal">
+
+        <div class="modal-container">
+            <!-- Modal content -->
+            <div class="modal-content" id="modal-content">
+            </div>
+            <!-- Modal controler -->
+            <div class="controlers">
+                <span class="before" onclick="before()">Anterior</span>
+                <span class="next" onclick="next()">Próximo</span>
+            </div>
+        </div>
+
+      
+    </div>
+    <script>
+        var data = `
+        [
+    {
+        "id": "1",
+        "tituloThumb": "Teste 1",
+        "titulo": "Teste Titulo 1",
+        "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/be0fa6ec-cd0b-405a-903b-2579ceb0c3fe/",
+        "url": "https://www.vivest.com.br/site/paginas/sobre-nos",
+        "openNewTab": true
+    },
+    {
+        "id": "2",
+        "tituloThumb": "Teste 2",
+        "titulo": "Teste Titulo 2",
+        "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/eaafe3ad-53cf-4c9a-a269-48685705cfd4/",
+        "url": "https://www.vivest.com.br/site/paginas/governanca",
+        "openNewTab": true
+    },
+    {
+        "id": "3",
+        "tituloThumb": "Teste 3",
+        "titulo": "Teste Titulo 3",
+        "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/316350db-02ea-4fa5-9e40-8c68cee62221/",
+        "url": "https://www.vivest.com.br/site/paginas/carreira",
+        "openNewTab": true
+    }
+]
+
+        `
+        var dataStories = [];
+        var currentStory = 0;
+        var lidos = [];
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        //get modal content
+        var modalcontent = document.getElementById('modal-content');
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+        }
+
+
+        window.onload = function() {
+            // recupera stories
+            dataStories = JSON.parse( data );
+
+            // verifica lidos
+            storageContent = JSON.parse(localStorage.getItem("lidos"));
+            if (storageContent != null) { lidos = storageContent }
+
+            // get List
+            var lista = document.getElementById("lista");
+
+            dataStories.forEach(function (story, index) {
+                var storyItem = document.createElement("li");
+                storyItem.setAttribute("class", "story");
+                storyItem.setAttribute("id", story.id);
+                storyItem.setAttribute("data-index", index);
+                if(lidos.includes(Number(story.id))) { storyItem.classList.add("lido"); }
+                var storyContent = document.createElement("div");
+                storyContent.setAttribute("class", "story-thumb");
+                // storyContent.setAttribute("id", story.id);
+                storyContent.style.backgroundImage = "url(" + story.imgSrc + ")";
+                storyItem.appendChild(storyContent);
+                lista.appendChild(storyItem);
+            });
+
+            var elements = document.getElementsByClassName("story");
+
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].addEventListener('click', function() {openStory(this.id, this.dataset.index, this)});
+            }
+
+        };
+
+        function openStory(storyId, index, el) {
+            el.classList.add("lido");
+            currentStory = Number(index);
+            var contents = dataStories.filter(obj => {  return obj.id === storyId });
+            if (contents.length) {
+                modal.style.display = "block";
+                modalcontent.appendChild(document.createTextNode(contents[0].titulo));
+                // salva no storage ID do item lido
+                if(!lidos.includes(Number(storyId))) { lidos.push(Number(storyId)); }
+                localStorage.setItem("lidos", JSON.stringify(lidos))
+            } else {
+                modal.style.display = "none";
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            modalcontent.innerHTML = "";
+        }
+
+        function next() {
+            var nextStoryIndex = (currentStory + 1) == dataStories.length ? 0 : Number(currentStory) + 1;
+            var storyElement = document.getElementById(dataStories[nextStoryIndex].id);
+            closeModal();
+            openStory(dataStories[nextStoryIndex].id, nextStoryIndex,storyElement);
+        }
+
+        function before() {
+            var beforeStoryIndex = currentStory == 0 ? (dataStories.length - 1) : Number(currentStory) - 1;
+            var storyElement = document.getElementById(dataStories[beforeStoryIndex].id);
+            closeModal();
+            openStory(dataStories[beforeStoryIndex].id, beforeStoryIndex,storyElement);
+        }
+    </script>
+</body>
+</html>
