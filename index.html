@@ -128,6 +128,11 @@ li.story {
         if (event.target == modal) {
             closeModal();
         }
+        window.ontouchend = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+        }
         }
 
 
