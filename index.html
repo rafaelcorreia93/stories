@@ -13,18 +13,11 @@
   left: 0;
   top: 0;
   width: 100%; /* Full width */
-  height: 100%; /* Full height */
+  height: 100vh; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 100%; /* Could be more or less, depending on screen size */
+  align-items: center;
 }
 
 .story-thumb img {
@@ -50,19 +43,50 @@ li.story {
     margin: 10px;
 }
 .modal-container {
-    margin: 15% auto;
-    width: 600px;
+    background-color: #fefefe;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #888;
+    width: 100%;
+    border-radius: 10px;
+    height: 80vh;
+    max-width: 600px;
+    margin: auto;
+    position: relative;
 }
-.controlers {
-    display: flex;
-    justify-content: space-evenly;
-    font-family: open sans-serif;
-    font-size: 19px;
-    font-weight: 700;
-    text-decoration: underline;
+.controler {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    padding: 20px;
+}
+.controler.next {
+    right: 20px;
+    top: calc(50% - 40px);
+}
+.controler.before {
+    left: 20px;
+    top: calc(50% - 40px);
 }
 .lido .story-thumb {
     border-color: #e2e2e2;
+}
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
 }
     </style>
 </head>
@@ -76,9 +100,11 @@ li.story {
             <div class="modal-content" id="modal-content">
             </div>
             <!-- Modal controler -->
-            <div class="controlers">
-                <span class="before" onclick="before()">Anterior</span>
-                <span class="next" onclick="next()">Próximo</span>
+            <div class="controler before">
+                <i class="arrow left" onclick="before()"></i>
+            </div>
+            <div class="controler next">
+                <i class="arrow right" onclick="next()"></i>
             </div>
         </div>
 
@@ -174,7 +200,7 @@ li.story {
             currentStory = Number(index);
             var contents = dataStories.filter(obj => {  return obj.id === storyId });
             if (contents.length) {
-                modal.style.display = "block";
+                modal.style.display = "flex";
                 modalcontent.appendChild(document.createTextNode(contents[0].titulo));
                 // salva no storage ID do item lido
                 if(!lidos.includes(Number(storyId))) { lidos.push(Number(storyId)); }
