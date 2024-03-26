@@ -69,11 +69,7 @@ li.story {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .5s ease;
     z-index: 1;
-}
-.controler.transition {
-    background: #ff0000;
 }
 .controler.next {
     right: 0;
@@ -220,6 +216,13 @@ li.story {
         "id": "3",
         "tituloThumb": "Teste 3",
         "titulo": "Teste Titulo 3",
+        "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/316350db-02ea-4fa5-9e40-8c68cee62221/",
+        "url": "https://www.vivest.com.br/site/paginas/carreira"
+    },
+    {
+        "id": "4",
+        "tituloThumb": "Teste 4",
+        "titulo": "Teste Titulo 4",
         "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/316350db-02ea-4fa5-9e40-8c68cee62221/",
         "url": "https://www.vivest.com.br/site/paginas/carreira"
     }
@@ -417,7 +420,6 @@ li.story {
                     if (x < -100) {
                         next();
                         gestureincrement = 0;
-                        document.getElementById('iconNext').classList.remove('transition');
                     }
                     if (x > 100) {
                         before();
