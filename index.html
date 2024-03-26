@@ -55,7 +55,6 @@ li.story {
     max-width: 500px;
     margin: auto;
     position: relative;
-    overflow: hidden;
     box-shadow: 4px 7px 20px #61616187;
 }
 .controler {
@@ -137,6 +136,25 @@ li.story {
     text-align: center;
     line-height: 35px;
 }
+
+#indicadores {
+    position: absolute;
+    bottom: -30px;
+    text-align: center;
+    width: 100%;
+}
+#indicadores span {
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    display: inline-block;
+    padding: 1px;
+    border-radius: 50%;
+    margin: 0 7px;
+}
+#indicadores span.indicador-ativo {
+    background: #2a2a2a;
+}
     </style>
 </head>
 <body>
@@ -155,7 +173,7 @@ li.story {
             <div class="controler next" onclick="next()">
                 <i class="arrow right"></i>
             </div>
-            <div class="modal-gradient"></div>
+            <div id="indicadores"></div>
         </div>
 
       
@@ -168,26 +186,23 @@ li.story {
         "tituloThumb": "Teste 1",
         "titulo": "Teste Titulo 1",
         "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/be0fa6ec-cd0b-405a-903b-2579ceb0c3fe/",
-        "url": "https://www.vivest.com.br/site/paginas/sobre-nos",
-        "openNewTab": true
+        "url": "https://www.vivest.com.br/site/paginas/sobre-nos"
     },
     {
         "id": "2",
         "tituloThumb": "Teste 2",
         "titulo": "Teste Titulo 2",
         "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/eaafe3ad-53cf-4c9a-a269-48685705cfd4/",
-        "url": "https://www.vivest.com.br/site/paginas/governanca",
-        "openNewTab": true
+        "url": "https://www.vivest.com.br/site/paginas/governanca"
     },
     {
         "id": "3",
         "tituloThumb": "Teste 3",
         "titulo": "Teste Titulo 3",
         "imgSrc": "https://www3.vivest.com.br/api/assets/vivest-portal/316350db-02ea-4fa5-9e40-8c68cee62221/",
-        "url": "https://www.vivest.com.br/site/paginas/carreira",
-        "openNewTab": true
+        "url": "https://www.vivest.com.br/site/paginas/carreira"
     }
-]
+    ]
 
         `
         var dataStories = [];
@@ -216,14 +231,33 @@ li.story {
             // recupera stories
             dataStories = JSON.parse( data );
 
+            dataStories.forEach(function (story, index) {
+                // criar indicadores
+                var indicadoresContainer = document.getElementById('indicadores');
+                var indicadorEl = document.createElement('span');
+                indicadorEl.setAttribute('id', 'indicador-' + index);
+                indicadoresContainer.appendChild(indicadorEl);
+            });
+
             // verifica lidos
             storageContent = JSON.parse(localStorage.getItem("lidos"));
             if (storageContent != null) { lidos = storageContent }
 
+            var dataStoriesUpdated = dataStories.map(originalStory => { 
+                if(lidos.includes(Number(originalStory.id))) {
+                    originalStory.lido = true;
+                    return originalStory;
+                } else {
+                    originalStory.lido = false;
+                    return originalStory;
+                }
+            });
+            dataStoriesUpdated.sort((b, a) => b.lido - a.lido);
+            
             // get List
             var lista = document.getElementById("lista");
 
-            dataStories.forEach(function (story, index) {
+            dataStoriesUpdated.forEach(function (story, index) {
                 var storyItem = document.createElement("li");
                 storyItem.setAttribute("class", "story");
                 storyItem.setAttribute("id", story.id);
@@ -278,13 +312,17 @@ li.story {
 
                 // salva no storage ID do item lido
                 if(!lidos.includes(Number(storyId))) { lidos.push(Number(storyId)); }
-                localStorage.setItem("lidos", JSON.stringify(lidos))
+                localStorage.setItem("lidos", JSON.stringify(lidos));
+
+                // marca indicador ativo
+                document.getElementById('indicador-'+index).classList.add('indicador-ativo');
             } else {
                 modal.style.display = "none";
             }
         }
 
         function closeModal() {
+            document.getElementById('indicador-'+currentStory).classList.remove('indicador-ativo');
             modal.style.display = "none";
             modalcontent.innerHTML = "";
         }
@@ -314,6 +352,8 @@ li.story {
         let touchendX = 0;
         let touchendY = 0;
 
+        var gestureincrement = 0;
+
         const limit = Math.tan(150 * 1.5 / 180 * Math.PI);
         const gestureZone = document.getElementById('gesture-area');
 
@@ -327,6 +367,7 @@ li.story {
             touchendY = event.changedTouches[0].screenY;
             handleGesture(event);
         }, false);
+
 
         function handleGesture(e) {
             let x = touchendX - touchstartX;
