@@ -230,6 +230,7 @@ li.story {
 
         `
         var dataStories = [];
+        var dataStoriesUpdated = [];
         var currentStory = 0;
         var lidos = [];
         // Get the modal
@@ -267,7 +268,7 @@ li.story {
             storageContent = JSON.parse(localStorage.getItem("lidos"));
             if (storageContent != null) { lidos = storageContent }
 
-            var dataStoriesUpdated = dataStories.map(originalStory => { 
+            dataStoriesUpdated = dataStories.map(originalStory => { 
                 if(lidos.includes(Number(originalStory.id))) {
                     originalStory.lido = true;
                     return originalStory;
@@ -352,23 +353,23 @@ li.story {
         }
 
         function next() {
-            var nextStoryIndex = (currentStory + 1) == dataStories.length ? 0 : Number(currentStory) + 1;
-            var storyElement = document.getElementById(dataStories[nextStoryIndex].id);
+            var nextStoryIndex = (currentStory + 1) == dataStoriesUpdated.length ? 0 : Number(currentStory) + 1;
+            var storyElement = document.getElementById(dataStoriesUpdated[nextStoryIndex].id);
             closeModal();
-            openStory(dataStories[nextStoryIndex].id, nextStoryIndex,storyElement);
+            openStory(dataStoriesUpdated[nextStoryIndex].id, nextStoryIndex,storyElement);
         }
 
         function before() {
-            var beforeStoryIndex = currentStory == 0 ? (dataStories.length - 1) : Number(currentStory) - 1;
-            var storyElement = document.getElementById(dataStories[beforeStoryIndex].id);
+            var beforeStoryIndex = currentStory == 0 ? (dataStoriesUpdated.length - 1) : Number(currentStory) - 1;
+            var storyElement = document.getElementById(dataStoriesUpdated[beforeStoryIndex].id);
             closeModal();
-            openStory(dataStories[beforeStoryIndex].id, beforeStoryIndex,storyElement);
+            openStory(dataStoriesUpdated[beforeStoryIndex].id, beforeStoryIndex,storyElement);
         }
 
 
         // gestures
 
-
+/* 
         let pageWidth = window.innerWidth || document.body.clientWidth;
         let treshold = Math.max(1,Math.floor(0.01 * (pageWidth)));
         let touchstartX = 0;
@@ -429,7 +430,7 @@ li.story {
             } else {
                 console.log("tap");
             }
-        }
+        } */
     </script>
 </body>
 </html>
