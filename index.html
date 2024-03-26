@@ -46,15 +46,15 @@ li.story {
 }
 .modal-container {
     background-color: #fefefe;
-    padding: 20px;
     box-sizing: border-box;
     border: 1px solid #888;
     width: 100%;
     border-radius: 10px;
     height: 80%;
-    max-width: 600px;
+    max-width: 500px;
     margin: auto;
     position: relative;
+    overflow: hidden;
 }
 .controler {
     position: absolute;
@@ -75,8 +75,8 @@ li.story {
     border-color: #e2e2e2;
 }
 .arrow {
-    border: solid black;
-    border-width: 0 3px 3px 0;
+    border: solid #fff;
+    border-width: 0 7px 7px 0;
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -90,6 +90,42 @@ li.story {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
+.story-titulo {
+    position: absolute;
+    bottom: 0;
+    background: #e33e5a;
+    width: 100%;
+    font-size: 30px;
+    padding: 35px;
+    box-sizing: border-box;
+    color: #fff;
+    font-family: 'Open sans';
+    font-weight: 700;
+    height: 30%;
+}
+.image-holder {
+    height: 70%;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+}
+
+.btn-url {
+    display: block;
+    margin: 30px 0 0 0;
+    padding: 10px 25px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    background: #3C2E88;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+    text-decoration: none;
+}
     </style>
 </head>
 <body>
@@ -102,12 +138,13 @@ li.story {
             <div class="modal-content" id="modal-content">
             </div>
             <!-- Modal controler -->
-            <div class="controler before">
-                <i class="arrow left" onclick="before()"></i>
+            <div class="controler before" onclick="before()">
+                <i class="arrow left"></i>
             </div>
-            <div class="controler next">
-                <i class="arrow right" onclick="next()"></i>
+            <div class="controler next" onclick="next()">
+                <i class="arrow right"></i>
             </div>
+            <div class="modal-gradient"></div>
         </div>
 
       
@@ -203,7 +240,26 @@ li.story {
             var contents = dataStories.filter(obj => {  return obj.id === storyId });
             if (contents.length) {
                 modal.style.display = "flex";
-                modalcontent.appendChild(document.createTextNode(contents[0].titulo));
+                // criar titulo
+                var elTitulo = document.createElement("div");
+                elTitulo.classList.add("story-titulo");
+                elTitulo.innerText = contents[0].titulo;
+                modalcontent.appendChild(elTitulo);
+
+                // criar imagem
+                var imageHolder = document.createElement("div");
+                imageHolder.classList.add("image-holder");
+                imageHolder.style.backgroundImage = "url(" + contents[0].imgSrc + ")";
+                modalcontent.appendChild(imageHolder);
+
+                // criar botão
+                var btnUrl = document.createElement("a");
+                btnUrl.classList.add("btn-url");
+                btnUrl.innerHTML = "Saiba mais";
+                btnUrl.setAttribute("href", contents[0].url);
+                btnUrl.setAttribute("target", "_blank");
+                elTitulo.appendChild(btnUrl);
+
                 // salva no storage ID do item lido
                 if(!lidos.includes(Number(storyId))) { lidos.push(Number(storyId)); }
                 localStorage.setItem("lidos", JSON.stringify(lidos))
