@@ -56,40 +56,43 @@ li.story {
     margin: auto;
     position: relative;
     box-shadow: 4px 7px 20px #61616187;
+    overflow: hidden;
 }
 .controler {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 60px;
+    height: 60px;
     cursor: pointer;
-    padding: 20px;
+    border-radius: 50%;
+    background: #ff000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+    z-index: 1;
+}
+.controler.transition {
+    background: #ff0000;
 }
 .controler.next {
-    right: 20px;
+    right: 0;
     top: calc(50% - 40px);
 }
 .controler.before {
-    left: 20px;
+    transform: rotate(180deg);
+    left: 0;
     top: calc(50% - 40px);
+}
+.controler svg {
+    filter: drop-shadow(2px 5px 7px rgb(0 0 0 / 0.9));
 }
 .lido .story-thumb {
     border-color: #e2e2e2;
 }
 .arrow {
-    border: solid #fff;
-    border-width: 0 7px 7px 0;
     display: inline-block;
     height: 100%;
     width: 100%;
-}
-.right {
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-}
-
-.left {
-  transform: rotate(135deg);
-  -webkit-transform: rotate(135deg);
 }
 .story-titulo {
     position: absolute;
@@ -106,6 +109,7 @@ li.story {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    z-index: 1;
 }
 .image-holder {
     height: 60%;
@@ -139,7 +143,7 @@ li.story {
 
 #indicadores {
     position: absolute;
-    bottom: -30px;
+    bottom: 10px;
     text-align: center;
     width: 100%;
 }
@@ -151,9 +155,21 @@ li.story {
     padding: 1px;
     border-radius: 50%;
     margin: 0 7px;
+    z-index: 1;
 }
 #indicadores span.indicador-ativo {
     background: #2a2a2a;
+}
+#btn-backdrop {
+    background: #e33e5a9e;
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: calc(50% - 40px);
+    z-index: 0;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: all .1s ease-out;
 }
     </style>
 </head>
@@ -167,12 +183,16 @@ li.story {
             <div class="modal-content" id="modal-content">
             </div>
             <!-- Modal controler -->
-            <div class="controler before" onclick="before()">
-                <i class="arrow left"></i>
+            <div class="controler before" id="iconBefore" onclick="before()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#FFF" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                  </svg>            </div>
+            <div class="controler next" id="iconNext" onclick="next()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#FFF" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                  </svg>
             </div>
-            <div class="controler next" onclick="next()">
-                <i class="arrow right"></i>
-            </div>
+            <div id="btn-backdrop"></div>
             <div id="indicadores"></div>
         </div>
 
@@ -366,8 +386,25 @@ li.story {
             touchendX = event.changedTouches[0].screenX;
             touchendY = event.changedTouches[0].screenY;
             handleGesture(event);
+            gestureincrement = 0;
+            document.getElementById('btn-backdrop').style.transform = 'scale(' + 0 + ')';
         }, false);
 
+        gestureZone.addEventListener("touchmove", function(event) {
+            gestureincrement = gestureincrement == 0 ? 2 : gestureincrement + 4;
+            // right
+            if (event.changedTouches[0].screenX < touchstartX) {
+                document.getElementById('btn-backdrop').style.right = 0;
+                document.getElementById('btn-backdrop').style.left = 'inherit';
+                document.getElementById('btn-backdrop').style.transform = 'scale(' + gestureincrement/25 + ')';
+            } // left
+            else {
+                document.getElementById('btn-backdrop').style.left = 0;
+                document.getElementById('btn-backdrop').style.right = 'inherit';
+                document.getElementById('btn-backdrop').style.transform = 'scale(' + gestureincrement/25 + ')';
+            }
+            
+        });
 
         function handleGesture(e) {
             let x = touchendX - touchstartX;
@@ -378,9 +415,12 @@ li.story {
                 if (yx <= limit) {
                     if (x < -100) {
                         next();
+                        gestureincrement = 0;
+                        document.getElementById('iconNext').classList.remove('transition');
                     }
                     if (x > 100) {
                         before();
+                        gestureincrement = 0;
                     }
                 }
             } else {
