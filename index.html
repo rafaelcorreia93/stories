@@ -29,6 +29,8 @@
 
 ul {
     list-style-type: none;
+    overflow: scroll;
+    white-space: nowrap;
 }
 
 .story-thumb {
@@ -43,6 +45,7 @@ ul {
 li.story {
     display: inline-block;
     margin: 10px;
+    text-align: center
 }
 .modal-container {
     box-sizing: border-box;
@@ -128,6 +131,12 @@ li.story {
     width: fit-content;
     text-decoration: none;
 }
+
+.story span {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    line-height: 35px;
+}
     </style>
 </head>
 <body>
@@ -135,7 +144,7 @@ li.story {
     </ul>
     <div id="myModal" class="modal">
 
-        <div class="modal-container">
+        <div class="modal-container" id="gesture-area">
             <!-- Modal content -->
             <div class="modal-content" id="modal-content">
             </div>
@@ -222,9 +231,11 @@ li.story {
                 if(lidos.includes(Number(story.id))) { storyItem.classList.add("lido"); }
                 var storyContent = document.createElement("div");
                 storyContent.setAttribute("class", "story-thumb");
-                // storyContent.setAttribute("id", story.id);
                 storyContent.style.backgroundImage = "url(" + story.imgSrc + ")";
+                var storyThumbTitle = document.createElement("span");
+                storyThumbTitle.innerText = story.tituloThumb;
                 storyItem.appendChild(storyContent);
+                storyItem.appendChild(storyThumbTitle);
                 lista.appendChild(storyItem);
             });
 
@@ -290,6 +301,50 @@ li.story {
             var storyElement = document.getElementById(dataStories[beforeStoryIndex].id);
             closeModal();
             openStory(dataStories[beforeStoryIndex].id, beforeStoryIndex,storyElement);
+        }
+
+
+        // gestures
+
+
+        let pageWidth = window.innerWidth || document.body.clientWidth;
+        let treshold = Math.max(1,Math.floor(0.01 * (pageWidth)));
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let touchendX = 0;
+        let touchendY = 0;
+
+        const limit = Math.tan(150 * 1.5 / 180 * Math.PI);
+        const gestureZone = document.getElementById('gesture-area');
+
+        gestureZone.addEventListener('touchstart', function(event) {
+            touchstartX = event.changedTouches[0].screenX;
+            touchstartY = event.changedTouches[0].screenY;
+        }, false);
+
+        gestureZone.addEventListener('touchend', function(event) {
+            touchendX = event.changedTouches[0].screenX;
+            touchendY = event.changedTouches[0].screenY;
+            handleGesture(event);
+        }, false);
+
+        function handleGesture(e) {
+            let x = touchendX - touchstartX;
+            let y = touchendY - touchstartY;
+            let xy = Math.abs(x / y);
+            let yx = Math.abs(y / x);
+            if (Math.abs(x) > treshold || Math.abs(y) > treshold) {
+                if (yx <= limit) {
+                    if (x < -100) {
+                        next();
+                    }
+                    if (x > 100) {
+                        before();
+                    }
+                }
+            } else {
+                console.log("tap");
+            }
         }
     </script>
 </body>
