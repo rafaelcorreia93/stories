@@ -6,7 +6,7 @@
 <title>Stories</title>
 <style>
 /* The Modal (background) */
-.modal {
+.modal-stories-backdrop {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -28,7 +28,7 @@
     height: 100%;
 }
 
-ul {
+ul.preview-stories {
     list-style-type: none;
     overflow: auto;
     white-space: nowrap;
@@ -48,7 +48,7 @@ li.story {
     margin: 10px;
     text-align: center
 }
-.modal-container {
+.story-modal-container {
     box-sizing: border-box;
     width: 90%;
     border-radius: 10px;
@@ -59,7 +59,7 @@ li.story {
     box-shadow: 4px 7px 20px #61616187;
     overflow: hidden;
 }
-.controler {
+.story-controler {
     position: absolute;
     width: 60px;
     height: 60px;
@@ -71,25 +71,20 @@ li.story {
     justify-content: center;
     z-index: 1;
 }
-.controler.next {
+.story-controler.next {
     right: 0;
     top: calc(50% - 40px);
 }
-.controler.before {
+.story-controler.before {
     transform: rotate(180deg);
     left: 0;
     top: calc(50% - 40px);
 }
-.controler svg {
+.story-controler svg {
     filter: drop-shadow(2px 5px 7px rgb(0 0 0 / 0.9));
 }
 .lido .story-thumb {
     border-color: #e2e2e2;
-}
-.arrow {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
 }
 .story-titulo {
     position: absolute;
@@ -108,7 +103,7 @@ li.story {
     justify-content: space-evenly;
     z-index: 1;
 }
-.image-holder {
+#modal-content .image-holder {
     height: 60%;
     background-size: cover;
     background-position: center;
@@ -117,7 +112,7 @@ li.story {
     z-index: 0;
 }
 
-.btn-url {
+#modal-content .btn-url {
     display: block;
     margin: 20px 0 0 0;
     padding: 5px 25px;
@@ -171,20 +166,20 @@ li.story {
     </style>
 </head>
 <body>
-    <ul id="lista">
+    <ul id="lista-stories" class="preview-stories">
     </ul>
-    <div id="myModal" class="modal">
+    <div id="modalStory" class="modal-stories-backdrop">
 
-        <div class="modal-container" id="gesture-area">
+        <div class="story-modal-container" id="gesture-area">
             <!-- Modal content -->
             <div class="modal-content" id="modal-content">
             </div>
             <!-- Modal controler -->
-            <div class="controler before" id="iconBefore" onclick="before()">
+            <div class="story-controler before" id="iconBefore" onclick="before()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#FFF" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
                   </svg>            </div>
-            <div class="controler next" id="iconNext" onclick="next()">
+            <div class="story-controler next" id="iconNext" onclick="next()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#FFF" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
                   </svg>
@@ -234,7 +229,7 @@ li.story {
         var currentStory = 0;
         var lidos = [];
         // Get the modal
-        var modal = document.getElementById("myModal");
+        var modal = document.getElementById("modalStory");
 
         //get modal content
         var modalcontent = document.getElementById('modal-content');
@@ -280,7 +275,7 @@ li.story {
             dataStoriesUpdated.sort((b, a) => b.lido - a.lido);
             
             // get List
-            var lista = document.getElementById("lista");
+            var lista = document.getElementById("lista-stories");
 
             dataStoriesUpdated.forEach(function (story, index) {
                 var storyItem = document.createElement("li");
@@ -367,70 +362,6 @@ li.story {
         }
 
 
-        // gestures
-
-/* 
-        let pageWidth = window.innerWidth || document.body.clientWidth;
-        let treshold = Math.max(1,Math.floor(0.01 * (pageWidth)));
-        let touchstartX = 0;
-        let touchstartY = 0;
-        let touchendX = 0;
-        let touchendY = 0;
-
-        var gestureincrement = 0;
-
-        const limit = Math.tan(150 * 1.5 / 180 * Math.PI);
-        const gestureZone = document.getElementById('gesture-area');
-
-        gestureZone.addEventListener('touchstart', function(event) {
-            touchstartX = event.changedTouches[0].screenX;
-            touchstartY = event.changedTouches[0].screenY;
-        }, false);
-
-        gestureZone.addEventListener('touchend', function(event) {
-            touchendX = event.changedTouches[0].screenX;
-            touchendY = event.changedTouches[0].screenY;
-            handleGesture(event);
-            gestureincrement = 0;
-            document.getElementById('btn-backdrop').style.transform = 'scale(' + 0 + ')';
-        }, false);
-
-        gestureZone.addEventListener("touchmove", function(event) {
-            gestureincrement = gestureincrement == 0 ? 2 : gestureincrement + 4;
-            // right
-            if (event.changedTouches[0].screenX < touchstartX) {
-                document.getElementById('btn-backdrop').style.right = 0;
-                document.getElementById('btn-backdrop').style.left = 'inherit';
-                document.getElementById('btn-backdrop').style.transform = 'scale(' + gestureincrement/25 + ')';
-            } // left
-            else {
-                document.getElementById('btn-backdrop').style.left = 0;
-                document.getElementById('btn-backdrop').style.right = 'inherit';
-                document.getElementById('btn-backdrop').style.transform = 'scale(' + gestureincrement/25 + ')';
-            }
-            
-        });
-
-        function handleGesture(e) {
-            let x = touchendX - touchstartX;
-            let y = touchendY - touchstartY;
-            let xy = Math.abs(x / y);
-            let yx = Math.abs(y / x);
-            if (Math.abs(x) > treshold || Math.abs(y) > treshold) {
-                if (yx <= limit) {
-                    if (x < -100) {
-                        next();
-                        gestureincrement = 0;
-                    }
-                    if (x > 100) {
-                        before();
-                        gestureincrement = 0;
-                    }
-                }
-            } else {
-                console.log("tap");
-            }
-        } */
     </script>
 </body>
 </html>
