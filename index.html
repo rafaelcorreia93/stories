@@ -104,7 +104,7 @@ li.story {
     justify-content: space-evenly;
     z-index: 1;
 }
-#modal-content .image-holder {
+#story-modal-content .image-holder {
     height: 60%;
     background-size: cover;
     background-position: center;
@@ -113,7 +113,7 @@ li.story {
     z-index: 0;
 }
 
-#modal-content .btn-url {
+#story-modal-content .btn-url {
     display: block;
     margin: 20px 0 0 0;
     padding: 5px 25px;
@@ -184,7 +184,7 @@ li.story {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" width="40" height="40" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"> <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/> </svg>
             </div>
             <!-- Modal content -->
-            <div class="modal-content" id="modal-content">
+            <div class="story-modal-content" id="story-modal-content">
             </div>
             <!-- Modal controler -->
             <div class="story-controler before" id="iconBefore" onclick="before()">
@@ -243,7 +243,7 @@ li.story {
         var modal = document.getElementById("modalStory");
 
         //get modal content
-        var modalcontent = document.getElementById('modal-content');
+        var modalcontent = document.getElementById('story-modal-content');
 
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
