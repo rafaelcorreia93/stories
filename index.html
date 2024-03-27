@@ -6,9 +6,6 @@
 <title>Stories</title>
 <style>
 /* The Modal (background) */
-html, body {
-    overscroll-behavior: contain;
-}
 .modal-stories-backdrop {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -54,7 +51,7 @@ li.story {
 }
 .story-modal-container {
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
     border-radius: 10px;
     height: 80%;
     max-width: 500px;
@@ -156,16 +153,24 @@ li.story {
 #indicadores span.indicador-ativo {
     background: #2a2a2a;
 }
-#btn-backdrop {
-    background: #e33e5a9e;
-    width: 60px;
-    height: 60px;
+.story-close {
     position: absolute;
-    top: calc(50% - 40px);
-    z-index: 0;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: all .1s ease-out;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    z-index: 1;
+    padding: 20px;
+    cursor: pointer;
+}
+.story-close svg {
+    filter: drop-shadow(2px 5px 15px rgb(0 0 0 / 0.9));
+}
+
+@media only screen and (max-width: 425px) {
+    .story-modal-container {
+    height: 100%;
+    }
 }
     </style>
 </head>
@@ -175,6 +180,9 @@ li.story {
     <div id="modalStory" class="modal-stories-backdrop">
 
         <div class="story-modal-container" id="gesture-area">
+            <div class="story-close" onclick="closeModalStory()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" width="40" height="40" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"> <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/> </svg>
+            </div>
             <!-- Modal content -->
             <div class="modal-content" id="modal-content">
             </div>
@@ -188,7 +196,6 @@ li.story {
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
                   </svg>
             </div>
-            <div id="btn-backdrop"></div>
             <div id="indicadores"></div>
         </div>
 
@@ -241,11 +248,11 @@ li.story {
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
         if (event.target == modal) {
-            closeModal();
+            closeModalStory();
         }
         window.ontouchend = function(event) {
         if (event.target == modal) {
-            closeModal();
+            closeModalStory();
         }
         }
         }
@@ -345,7 +352,7 @@ li.story {
             }
         }
 
-        function closeModal() {
+        function closeModalStory() {
             document.getElementById('indicador-'+currentStory).classList.remove('indicador-ativo');
             modal.style.display = "none";
             modalcontent.innerHTML = "";
@@ -354,17 +361,16 @@ li.story {
         function next() {
             var nextStoryIndex = (currentStory + 1) == dataStoriesUpdated.length ? 0 : Number(currentStory) + 1;
             var storyElement = document.getElementById(dataStoriesUpdated[nextStoryIndex].id);
-            closeModal();
+            closeModalStory();
             openStory(dataStoriesUpdated[nextStoryIndex].id, nextStoryIndex,storyElement);
         }
 
         function before() {
             var beforeStoryIndex = currentStory == 0 ? (dataStoriesUpdated.length - 1) : Number(currentStory) - 1;
             var storyElement = document.getElementById(dataStoriesUpdated[beforeStoryIndex].id);
-            closeModal();
+            closeModalStory();
             openStory(dataStoriesUpdated[beforeStoryIndex].id, beforeStoryIndex,storyElement);
         }
-
 
     </script>
 </body>
